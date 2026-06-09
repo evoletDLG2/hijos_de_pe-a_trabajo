@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0f172a" />
+  <title>Hijos de Peña</title>
+  <link rel="stylesheet" href="estilos/personalizado.css" />
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <header class="topbar">
+      <div class="brand-group">
+        <button class="icon-btn" id="btnMenu" aria-label="Abrir menú">☰</button>
+        <div class="brand-copy">
+          <span class="eyebrow">Sistema de gamificación escolar</span>
+          <h1>Hijos de Peña</h1>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <div class="status-pill" id="statusSesion">Sin sesión</div>
+        <button class="ghost-btn hidden" id="btnSalir">Salir</button>
+      </div>
+    </header>
+
+    <nav class="nav-principal hidden" id="navPrincipal" aria-label="Navegación principal">
+      <button class="nav-link active" data-vista="inicio">Inicio</button>
+      <button class="nav-link" data-vista="estudiante">Estudiante</button>
+      <button class="nav-link" data-vista="profesor">Profesor</button>
+      <button class="nav-link" data-vista="trofeos">Trofeos</button>
+    </nav>
+
+    <main class="main-content">
+      <section class="screen screen-active" id="pantallaInicio">
+        <div class="hero-card">
+          <div>
+            <p class="kicker">Offline • LocalStorage • Vanilla JS</p>
+            <h2>Convierte el salón en una arena de equipos, resiliencia y movimiento.</h2>
+            <p class="muted">
+              Carga tus CSV, entra como profesor o estudiante y administra equipos, ruleta, feedbacks y logros desde cualquier navegador moderno.
+            </p>
+          </div>
+
+          <div class="login-grid">
+            <article class="login-card">
+              <h3>Eres Estudiante</h3>
+              <p class="muted">Escribe tu nombre completo para ingresar. El sistema corrige errores de dedo.</p>
+              <label for="inputNombreEstudiante">Nombre completo</label>
+              <input type="text" id="inputNombreEstudiante" placeholder="Ej. Ignacio Vázquez López" autocomplete="off" />
+              <button class="primary-btn" id="btnEntrarEstudiante">Entrar como estudiante</button>
+              <div class="suggestion-box hidden" id="cajaSugerencia"></div>
+            </article>
+
+            <article class="login-card">
+              <h3>Eres Profesor</h3>
+              <p class="muted">Acceso con contraseña simple.</p>
+              <label for="inputClaveProfesor">Contraseña</label>
+              <input type="password" id="inputClaveProfesor" placeholder="1234" />
+              <button class="secondary-btn" id="btnEntrarProfesor">Entrar como profesor</button>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen hidden" id="pantallaProfesor">
+        <div class="section-head">
+          <div>
+            <p class="kicker">Panel del profesor</p>
+            <h2>Gestión y expedientes</h2>
+          </div>
+          <button class="ghost-btn" id="btnRecalcular">Recalcular tablero</button>
+        </div>
+
+        <div class="grid-2">
+          <article class="panel-card">
+            <h3>Carga de archivos CSV</h3>
+            <p class="muted">Usa delimitador por comas. Los cambios reemplazan la base actual.</p>
+
+            <div class="file-row">
+              <label for="csvEstudiantes">Estudiantes_y_Roles.csv</label>
+              <input type="file" id="csvEstudiantes" accept=".csv,text/csv" />
+            </div>
+            <div class="file-row">
+              <label for="csvActividades">Actividades_Completas_Unico_Archivo.csv</label>
+              <input type="file" id="csvActividades" accept=".csv,text/csv" />
+            </div>
+            <div class="file-row">
+              <label for="csvAdversidades">Adversidades_Directas.csv</label>
+              <input type="file" id="csvAdversidades" accept=".csv,text/csv" />
+            </div>
+
+            <div class="actions-row">
+              <button class="primary-btn" id="btnCargarCsv">Cargar archivos</button>
+              <button class="secondary-btn" id="btnResetDatos">Reiniciar datos locales</button>
+            </div>
+
+            <div class="notice" id="estadoCarga">Esperando archivos.</div>
+          </article>
+
+          <article class="panel-card">
+            <h3>Ranking general</h3>
+            <div class="ranking-list" id="rankingGeneral"></div>
+          </article>
+        </div>
+
+        <article class="panel-card">
+          <div class="section-head compact">
+            <div>
+              <h3>Fichas de alumnos</h3>
+              <p class="muted">Clic para desplegar o cerrar cada expediente.</p>
+            </div>
+            <button class="ghost-btn" id="btnExpandirTodo">Abrir todo</button>
+          </div>
+          <div class="students-grid" id="listaEstudiantesProfesor"></div>
+        </article>
+
+        <article class="panel-card">
+          <h3>Equipos y bitácora</h3>
+          <div class="teams-grid" id="listaEquiposProfesor"></div>
+        </article>
+      </section>
+
+      <section class="screen hidden" id="pantallaEstudiante">
+        <div class="section-head">
+          <div>
+            <p class="kicker">Panel estudiantil</p>
+            <h2 id="saludoEstudiante">Bienvenido</h2>
+          </div>
+          <div class="actions-row">
+            <button class="ghost-btn" data-vista="trofeos">Trofeos</button>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <article class="panel-card">
+            <h3>Tu perfil</h3>
+            <div class="profile-grid" id="tarjetaPerfilEstudiante"></div>
+          </article>
+
+          <article class="panel-card">
+            <h3>Invitaciones offline</h3>
+            <p class="muted">Genera token, compártelo por WhatsApp y consolida la unión con la confirmación.</p>
+            <div class="stack">
+              <label for="inputTokenInvitacion">Token de invitación o confirmación</label>
+              <textarea id="inputTokenInvitacion" rows="4" placeholder="Pega aquí el token que te compartieron"></textarea>
+              <div class="actions-row">
+                <button class="primary-btn" id="btnAceptarInvitacion">Aceptar invitación</button>
+                <button class="secondary-btn" id="btnConfirmarUnion">Confirmar unión</button>
+              </div>
+              <div class="token-output" id="salidaToken"></div>
+            </div>
+          </article>
+        </div>
+
+        <article class="panel-card">
+          <div class="section-head compact">
+            <div>
+              <h3>Compañeros registrados</h3>
+              <p class="muted">Se muestran todos los alumnos cargados por el profesor.</p>
+            </div>
+            <button class="ghost-btn" id="btnCrearEscuadra">Fundar escuadra</button>
+          </div>
+          <div class="students-grid" id="listaCompanerosEstudiante"></div>
+        </article>
+
+        <article class="panel-card">
+          <div class="section-head compact">
+            <div>
+              <h3>Escuadra actual y ruleta</h3>
+              <p class="muted">Gira por equipo, acepta o rechaza, y deja que el sistema dispare la adversidad.</p>
+            </div>
+            <div class="badge" id="badgeEquipoActual">Sin equipo</div>
+          </div>
+
+          <div class="wheel-layout">
+            <div class="wheel-stage">
+              <div class="pointer"></div>
+              <div class="wheel" id="ruletaActividades"></div>
+            </div>
+            <div class="wheel-panel">
+              <button class="primary-btn" id="btnGirarRuleta">Girar ruleta</button>
+              <div class="challenge-card hidden" id="tarjetaReto">
+                <h4 id="retoTitulo">Reto</h4>
+                <p id="retoDescripcion"></p>
+                <div class="actions-row">
+                  <button class="primary-btn" id="btnAceptarReto">Aceptar</button>
+                  <button class="danger-btn" id="btnRechazarReto">Rechazar</button>
+                </div>
+              </div>
+              <div class="alert-card hidden" id="tarjetaAdversidad"></div>
+            </div>
+          </div>
+        </article>
+
+        <article class="panel-card">
+          <div class="section-head compact">
+            <div>
+              <h3>Feedbacks del equipo</h3>
+              <p class="muted">Reseñas cortas o reportes de desperfecciones.</p>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div class="stack">
+              <label for="selectCompaneroFeedback">Compañero</label>
+              <select id="selectCompaneroFeedback"></select>
+              <label for="textoFeedback">Reseña</label>
+              <textarea id="textoFeedback" rows="4" placeholder="Escribe una reseña breve o un reporte de actitud"></textarea>
+              <label class="switch-row">
+                <input type="checkbox" id="checkDesperfeccion" />
+                <span>Marcar como desperfección</span>
+              </label>
+              <button class="secondary-btn" id="btnEnviarFeedback">Enviar feedback</button>
+            </div>
+            <div class="stack">
+              <h4>Recibidos por ti</h4>
+              <div class="feed-list" id="listaFeedbacksRecibidos"></div>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="screen hidden" id="pantallaTrofeos">
+        <div class="section-head">
+          <div>
+            <p class="kicker">Vitrina de trofeos</p>
+            <h2>Medallas y logros</h2>
+          </div>
+        </div>
+        <div class="trophies-grid" id="vitrinaTrofeos"></div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast-zone" id="toastZone" aria-live="polite" aria-atomic="true"></div>
+
+  <div class="modal hidden" id="modalGenerico" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+    <div class="modal-card">
+      <div class="section-head compact">
+        <h3 id="modalTitulo">Modal</h3>
+        <button class="icon-btn" id="btnCerrarModal" aria-label="Cerrar modal">✕</button>
+      </div>
+      <div id="modalCuerpo"></div>
+    </div>
+  </div>
+
+  <script src="scripts/logica.js"></script>
+</body>
+</html>
