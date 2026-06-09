@@ -242,7 +242,26 @@
       <div id="modalCuerpo"></div>
     </div>
   </div>
+  <script type="module">
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
 
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyD_FvuOW3sZZOsmDV09wnKQs1EF68tZzJY",
+  authDomain: "hijos-de-pe-a.firebaseapp.com",
+  projectId: "hijos-de-pe-a",
+  storageBucket: "hijos-de-pe-a.firebasestorage.app",
+  messagingSenderId: "562678287770",
+  appId: "1:562678287770:web:8d66c67da91c747911fe23",
+  measurementId: "G-LQK87167ZJ"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
   <script src="logica.js"></script>
 </body>
 </html>
